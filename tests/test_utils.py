@@ -1,6 +1,7 @@
 import pytest
 
-from src.utils import get_info_about_transaction, get_kind_of_transaction, reformat_date
+from src.utils import (get_description_info, get_info_about_transaction, get_info_about_transactions,
+                       get_kind_of_transaction, get_statistic_about_transactions, reformat_date)
 
 
 @pytest.mark.parametrize(
@@ -108,3 +109,30 @@ def test_get_kind_of_transaction(get_data: list[dict]) -> None:
     assert get_data[0] in get_kind_of_transaction("EXECUTED", "data/transactions.json")
     assert get_data[1] in get_kind_of_transaction("CANCELED", "data/transactions.json")
     assert get_data[2] in get_kind_of_transaction("PENDING", "data/transactions.json")
+
+
+def test_get_description_info() -> None:
+    assert get_description_info("data/transactions.json") == {
+        "Перевод организации": None,
+        "Перевод с карты на карту": None,
+        "Открытие вклада": None,
+        "Перевод со счета на счет": None,
+        "Без описания": None,
+    }
+
+
+def test_get_info_about_transactions() -> None:
+    assert len(get_info_about_transactions("Перевод организации", "data/transactions.json")) == 117
+    assert len(get_info_about_transactions("Перевод с карты на карту", "data/transactions.json")) == 587
+    assert len(get_info_about_transactions("Открытие вклада", "data/transactions.json")) == 185
+    assert len(get_info_about_transactions("Перевод со счета на счет", "data/transactions.json")) == 110
+
+
+def test_get_statistic_about_transactions() -> None:
+    description_info = get_description_info("data/transactions.json")
+    description_statistic = get_statistic_about_transactions(description_info, "data/transactions.json")
+    assert description_statistic["Перевод организации"] == 117
+    assert description_statistic["Перевод с карты на карту"] == 587
+    assert description_statistic["Открытие вклада"] == 185
+    assert description_statistic["Перевод со счета на счет"] == 110
+    assert description_statistic["Без описания"] == 1
