@@ -34,10 +34,10 @@ if __name__ == "__main__":
 
                         if currency_input == 1:
                             currency = get_currency(transaction["Тикер валюты"])
+                            print(currency)
                             transaction["Сумма"] = round(currency * transaction["Сумма"], 2)
                             transaction["Тикер валюты"] = "RUB"
                             print(transaction)
-
                         continue
 
             elif user_input == 2:
